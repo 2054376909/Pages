@@ -16,3 +16,8 @@
    
     display: block;
 }
+function drawLine(x1,x2,y1,y2) {
+    ctx.beginPath();
+ctx.moveTo(x1, x2);
+ctx.lineTo(y1, y2);
+ctx.stroke();

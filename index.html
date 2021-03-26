@@ -18,36 +18,77 @@
 
 
         let ctx = canvas.getContext("2d");
+        let last
+        // last作为上一次，不停覆盖记住鼠标位置
 
         let painting = false
         ctx.fillStyle = "black";
         ctx.strokeStyle = 'none';
-
-        canvas.onmousedown = () => {
-            painting = true
-        }
-
-
-        canvas.onmousemove = (e) => {
-            if (painting === true) {
-                // ctx.fillRect(e.clientX - 5, e.clientY - 5, 10, 10);
-                ctx.beginPath();
-                ctx.arc(e.clientX,e.clientY,10,0,2 * Math.PI);
-                ctx.stroke();
-                ctx.fill();
+        ctx.lineWidth = 5
+        ctx.lineCap = "round"
+        function drawLine(x1,x2,y1,y2) {
+    ctx.beginPath();
+ctx.moveTo(x1, x2);
+ctx.lineTo(y1, y2);
+ctx.stroke();}
 
 
 
-            } else {
+        var isTouchDevice = 'ontouchstart' in
+            document.documentElement;
+        if (isTouchDevice) {
+
+            canvas.ontouchstart = (e) => {
+                let x = e.touches[0].clientX
+                let y = e.touches[0].clientY
+                last = [x, y]
+            }
+            canvas.ontouchmove = (e) => {
+                // 因为手机触控会有多个手指，所以我们监测第一个手指
+                let x = e.touches[0].clientX
+                let y = e.touches[0].clientY
+                drawLine(last[0], last[1], x, y)
+                last = [x, y]
 
             }
 
-        }
+        } else {
+            canvas.onmousedown = (e) => {
+                painting = true
+                last = [e.clientX, e.clientY]
+            }
 
 
-        canvas.onmouseup = () => {
-            painting = false
+            canvas.onmousemove = (e) => {
+                if (painting === true) {
+                    // 矩形
+                    // ctx.fillRect(e.clientX - 5, e.clientY - 5, 10, 10);
+                    // 圆形
+                    // ctx.beginPath();
+                    // ctx.arc(e.clientX, e.clientY, 10, 0, 2 * Math.PI);
+                    // ctx.stroke();
+                    // ctx.fill();
+                    drawLine(last[0], last[1], e.clientX, e.clientY)
+                    last = [e.clientX, e.clientY]
+
+
+
+                }
+
+
+            }
+            canvas.onmouseup = () => {
+                painting = false
+            }
+
+
         }
+        
+        
+
+
+
+
 
 
     </script>
